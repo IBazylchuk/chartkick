@@ -385,6 +385,15 @@
         new Highcharts.Chart(options);
       };
 
+      this.renderGaugeChart = function (chart) {
+        var chartOptions = {};
+        var options = merge(merge(defaultOptions, chartOptions), chart.options.library || {});
+        options.chart.type = 'gauge';
+        options.chart.renderTo = chart.element.id;
+        options.series[0].data = chart.data;
+        new Highcharts.Chart(options);
+      };
+
       var self = this;
 
       this.renderBarChart = function (chart) {
@@ -719,6 +728,11 @@
     renderChart("Geo", chart);
   }
 
+  function processGaugeData(chart) {
+    chart.data = toArr(chart.data);
+    renderChart("Gauge", chart);
+  }
+
   function setElement(chart, element, dataSource, opts, callback) {
     if (typeof element === "string") {
       element = document.getElementById(element);
@@ -750,6 +764,9 @@
     },
     GeoChart: function (element, dataSource, opts) {
       setElement(this, element, dataSource, opts, processGeoData);
+    },
+    GaugeChart: function (element, dataSource, opts) {
+      setElement(this, element, dataSource, opts, processGaugeData);
     },
     charts: {}
   };

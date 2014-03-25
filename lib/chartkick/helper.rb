@@ -28,6 +28,10 @@ module Chartkick
       chartkick_chart "GeoChart", data_source, options
     end
 
+    def gauge_chart(data_source, options = {})
+      chartkick_chart "GaugeChart", data_source, options
+    end    
+
     private
 
     def chartkick_chart(klass, data_source, options, &block)
@@ -35,6 +39,7 @@ module Chartkick
       options = chartkick_deep_merge(Chartkick.options, options)
       element_id = options.delete(:id) || "chart-#{@chartkick_chart_id += 1}"
       height = options.delete(:height) || "300px"
+      timeout_refresh = options.delete(:timeout_refresh)
       # content_for: nil must override default
       content_for = options.has_key?(:content_for) ? options.delete(:content_for) : Chartkick.content_for
 
@@ -43,9 +48,11 @@ module Chartkick
   Loading...
 </div>
 HTML
-     js = <<JS
+      js = <<JS
 <script type="text/javascript">
+  #{ 'window.setInterval(function() {' if timeout_refresh }
   new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.to_json}, #{options.to_json});
+  #{ "}, #{timeout_refresh});" if timeout_refresh}
 </script>
 JS
       if content_for
