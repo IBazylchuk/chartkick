@@ -50,15 +50,21 @@ module Chartkick
 HTML
       js = <<JS
 <script type="text/javascript">
-  #{ 'window.setInterval(function() {' if timeout_refresh }
   new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.to_json}, #{options.to_json});
-  #{ "}, #{timeout_refresh});" if timeout_refresh}
+</script>
+JS
+      js_refresh = <<JS
+<script type="text/javascript">
+  window.setInterval(function() {
+    new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.to_json}, #{options.to_json});
+  }, #{timeout_refresh});
 </script>
 JS
       if content_for
         content_for(content_for) { js.respond_to?(:html_safe) ? js.html_safe : js }
       else
         html += js
+        html += js_refresh if timeout_refresh
       end
 
       html.respond_to?(:html_safe) ? html.html_safe : html
