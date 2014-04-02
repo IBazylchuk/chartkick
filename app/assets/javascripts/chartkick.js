@@ -268,7 +268,8 @@
           areaspline: {},
           series: {
             marker: {}
-          }
+          },
+          column: {}
         }
       };
 
@@ -285,7 +286,7 @@
       };
 
       var setStacked = function (options) {
-        options.plotOptions.series.stacking = "normal";
+        options.plotOptions.column.stacking = "normal";
       };
 
       var jsOptions = jsOptionsFunc(defaultOptions, hideLegend, setMin, setMax, setStacked);
@@ -375,10 +376,11 @@
             d.push(rows[categories[j]][i] || 0);
           }
 
-          newSeries.push({
-            name: series[i].name,
-            data: d
-          });
+          series[i].data = d;
+          series[i].type = series[i].type || "column";
+          series[i].tooltip = series[i].tooltip || defaultOptions.tooltip;
+
+          newSeries.push(series[i]);
         }
         options.series = newSeries;
 
@@ -659,7 +661,7 @@
   // process data
 
   function processSeries(series, opts, time) {
-    var i, j, data, r, key;
+    var i, j, l, data, r, key, value;
 
     // see if one series or multiple
     if (!isArray(series) || typeof series[0] !== "object" || isArray(series[0])) {
@@ -679,7 +681,15 @@
       for (j = 0; j < data.length; j++) {
         key = data[j][0];
         key = time ? toDate(key) : toStr(key);
-        r.push([key, toFloat(data[j][1])]);
+        value = data[j][1];
+        if (isArray(value)) {
+          for (l = 0; l < value.length; l++) {
+            value[l] = toFloat(value[l]);
+          }
+        } else {
+          value = toFloat(value);
+        }
+        r.push([key, value]);
       }
       if (time) {
         r.sort(sortByTime);
