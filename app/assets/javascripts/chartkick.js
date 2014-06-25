@@ -11,7 +11,7 @@
 (function (window) {
   'use strict';
 
-  var Chartkick, ISO8601_PATTERN, DECIMAL_SEPARATOR, adapters = [];
+  var Chartkick, ISO8601_PATTERN, DECIMAL_SEPARATOR, adapters = [], symborOffsets = {};
 
   var $ = window.jQuery || window.Zepto || window.$;
 
@@ -232,7 +232,9 @@
       var Highcharts = window.Highcharts;
 
       var defaultOptions = {
-        chart: {},
+        chart: {
+          events: {}
+        },
         xAxis: {
           labels: {
             style: {
@@ -339,6 +341,24 @@
           name: "Value",
           data: chart.data
         }];
+        if (chart.options.textInSymbol) {
+          symborOffsets = chart.options.textInSymbol;
+          options.chart.events = {
+            load: function(event) {
+              var _this = this;
+              setTimeout(function() {
+                $(_this.series[0].data).each(function(i,slice){
+                  var a = $('<div class="input-symbol-text" style="position:absolute;"></div>');
+                  a.text(slice.percentage.toFixed() + '%');
+                  var offset = $(slice.legendSymbol.element).offset();
+                  a.offset({ top: offset.top + symborOffsets.top, left: offset.left + symborOffsets.left});
+                            
+                  $('body').append(a);
+                });
+              }, 500);
+            }
+          };
+        }
         new Highcharts.Chart(options);
       };
 
@@ -428,6 +448,7 @@
 
       // Set chart options
       var defaultOptions = {
+        events: {},
         chartArea: {},
         fontName: "'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif",
         pointSize: 6,
