@@ -311,6 +311,7 @@
           };
         }
         var options = jsOptions(chart.data, chart.options, chartOptions), data, i, j;
+        options = merge(options, chart.options || {});
         options.xAxis.type = chart.options.discrete ? "category" : "datetime";
         options.chart.type = chartType;
         options.chart.renderTo = chart.element.id;
@@ -366,6 +367,7 @@
         var chartType = chartType || "column";
         var series = chart.data;
         var options = jsOptions(series, chart.options), i, j, s, d, rows = [];
+        options = merge(options, chart.options || {});
         options.chart.type = chartType;
         options.chart.renderTo = chart.element.id;
 
@@ -560,6 +562,7 @@
       this.renderLineChart = function (chart) {
         waitForLoaded(function () {
           var options = jsOptions(chart.data, chart.options);
+          options = merge(options, chart.options || {});
           var data = createDataTable(chart.data, chart.options.discrete ? "string" : "datetime");
           chart.chart = new google.visualization.LineChart(chart.element);
           resize(function () {
@@ -596,6 +599,7 @@
       this.renderColumnChart = function (chart) {
         waitForLoaded(function () {
           var options = jsOptions(chart.data, chart.options);
+          options = merge(options, chart.options || {});
           var data = createDataTable(chart.data, "string");
           chart.chart = new google.visualization.ColumnChart(chart.element);
           resize(function () {
@@ -614,6 +618,7 @@
             }
           };
           var options = jsOptionsFunc(defaultOptions, hideLegend, setBarMin, setBarMax, setStacked)(chart.data, chart.options, chartOptions);
+          options = merge(options, chart.options || {});
           var data = createDataTable(chart.data, "string");
           chart.chart = new google.visualization.BarChart(chart.element);
           resize(function () {
@@ -630,6 +635,7 @@
             areaOpacity: 0.5
           };
           var options = jsOptions(chart.data, chart.options, chartOptions);
+          options = merge(options, chart.options || {});
           var data = createDataTable(chart.data, chart.options.discrete ? "string" : "datetime");
           chart.chart = new google.visualization.AreaChart(chart.element);
           resize(function () {
@@ -647,6 +653,7 @@
             }
           };
           var options = merge(merge(defaultOptions, chartOptions), chart.options.library || {});
+          options = merge(options, chart.options || {});
 
           var data = new google.visualization.DataTable();
           data.addColumn("string", "");
