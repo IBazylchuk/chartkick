@@ -346,17 +346,18 @@
           symborOffsets = chart.options.textInSymbol;
           options.chart.events = {
             load: function(event) {
-              var _this = this;
+              var _this = this, label_class = chart.element.id +'-symbol';
+              $('.' + label_class).remove();
               setTimeout(function() {
                 $(_this.series[0].data).each(function(i,slice){
-                  var a = $('<div class="input-symbol-text" style="position:absolute;"></div>');
+                  var a = $('<div class="input-symbol-text '+ label_class +'" style="position:absolute;"></div>');
                   a.text(slice.percentage.toFixed() + '%');
                   var offset = $(slice.legendSymbol.element).offset();
                   a.offset({ top: offset.top + symborOffsets.top, left: offset.left + symborOffsets.left});
                             
                   $('body').append(a);
                 });
-              }, 500);
+              }, 1);
             }
           };
         }
