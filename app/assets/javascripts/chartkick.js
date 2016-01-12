@@ -354,7 +354,7 @@
                   a.text(slice.percentage.toFixed() + '%');
                   var offset = $(slice.legendSymbol.element).offset();
                   a.offset({ top: offset.top + symborOffsets.top, left: offset.left + symborOffsets.left});
-                            
+
                   $('body').append(a);
                 });
               }, 1);
@@ -417,6 +417,28 @@
         options.chart.renderTo = chart.element.id;
         options.series[0].data = chart.data;
         new Highcharts.Chart(options);
+      };
+
+      this.renderStockChart = function (chart) {
+        var chartOptions = {};
+
+        var options = jsOptions(chart.data, chart.options, chartOptions), data, i, j;
+        options = merge(options, chart.options || {});
+        options.xAxis.type = chart.options.discrete ? "category" : "datetime";
+        options.chart.renderTo = chart.element.id;
+
+        var series = chart.data;
+        for (i = 0; i < series.length; i++) {
+          data = series[i].data;
+          if (!chart.options.discrete) {
+            for (j = 0; j < data.length; j++) {
+              data[j][0] = data[j][0].getTime();
+            }
+          }
+          series[i].marker = {symbol: "circle"};
+        }
+        options.series = series;
+        new Highcharts.StockChart(options);
       };
 
       var self = this;
@@ -772,6 +794,11 @@
     renderChart("Gauge", chart);
   }
 
+  function processStockData(chart) {
+    chart.data = processSeries(chart.data, chart.options, true);
+    renderChart("Stock", chart);
+  }
+
   function setElement(chart, element, dataSource, opts, callback) {
     if (typeof element === "string") {
       element = document.getElementById(element);
@@ -806,6 +833,9 @@
     },
     GaugeChart: function (element, dataSource, opts) {
       setElement(this, element, dataSource, opts, processGaugeData);
+    },
+    StockChart: function (element, dataSource, opts) {
+      setElement(this, element, dataSource, opts, processStockData);
     },
     charts: {}
   };

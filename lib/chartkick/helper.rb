@@ -30,7 +30,11 @@ module Chartkick
 
     def gauge_chart(data_source, options = {})
       chartkick_chart "GaugeChart", data_source, options
-    end    
+    end
+
+    def stock_chart(data_source, options = {})
+      chartkick_chart "StockChart", data_source, options
+    end
 
     private
 
